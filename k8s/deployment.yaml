@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: news-agent
+  namespace: news
+  labels:
+    app: news-agent
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate        # single SQLite writer: old pod must release the PVC first
+  selector:
+    matchLabels:
+      app: news-agent
+  template:
+    metadata:
+      labels:
+        app: news-agent
+    spec:
+      containers:
+        - name: news-agent
+          image: news-agent:latest
+          imagePullPolicy: IfNotPresent   # image is imported locally into k3s
+          envFrom:
+            - secretRef:
+                name: news-agent-secrets
+            - configMapRef:
+                name: news-agent-config
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              memory: "256Mi"
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: news-agent-data
