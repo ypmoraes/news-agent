@@ -205,7 +205,8 @@ def handle_update(conn, upd):
             "<b>Comandos:</b>\n"
             "/start \u2014 inscrever-se\n"
             "/stop \u2014 cancelar inscri\u00e7\u00e3o\n"
-            "/sobre \u2014 sobre o bot\n\n"
+            "/sobre \u2014 sobre o bot\n"
+            "/projeto \u2014 como o bot \u00e9 feito por baixo do cap\u00f4\n\n"
             "Desenvolvido com Claude (Anthropic) + ElevenLabs."
         ))
         log.info("subscribed %s (%s)", chat_id, name)
