@@ -49,7 +49,7 @@ PROJECT_INFO = (
     "escrito do zero: ouve seus comandos (/start, /stop etc.) e, no mesmo "
     "loop, dispara o digest sozinho no horário certo. Tudo em containers "
     "Docker, com o estado (quem é assinante, o que já foi enviado) guardado "
-    "num banquinho SQLite.\n\n"
+    "num banco de dados SQLite.\n\n"
     "<b>Como foi construído</b>\n"
     "O projeto inteiro — do bot ao deploy no Kubernetes — foi desenvolvido "
     "em pair programming com o Claude Code, o assistente de código da "
