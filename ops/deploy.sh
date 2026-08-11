@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Deploy do news-agent para o servidor k3s.
-# Uso: ./deploy.sh
+# Uso (a partir da raiz do repo): ops/deploy.sh
 set -euo pipefail
 
 SERVER="ymoraes@192.168.68.115"
@@ -11,12 +11,12 @@ REMOTE_DIR="/opt/news-agent/news-agent"
 echo "==> Copiando arquivos para o servidor..."
 rsync -az --info=progress2 \
   -e "ssh -i ~/.ssh/news-agent" \
-  app requirements.txt Dockerfile k8s \
+  app requirements.txt ops k8s \
   "$SERVER:$REMOTE_DIR/" \
   --exclude="*.pyc" --exclude="__pycache__"
 
 echo "==> Build da imagem Docker..."
-$SSH $SERVER "cd $REMOTE_DIR && docker build -t news-agent:latest ."
+$SSH $SERVER "cd $REMOTE_DIR && docker build -f ops/Dockerfile -t news-agent:latest ."
 
 echo "==> Exportando e importando no k3s..."
 $SSH $SERVER "

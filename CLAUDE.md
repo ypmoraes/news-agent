@@ -13,8 +13,10 @@ Roda no k3s de um laptop-servidor.
   `telegram`, `main`.
 - `k8s/` — manifestos: namespace, pvc, configmap, secret.example, deployment,
   kustomization.
-- `Dockerfile`, `requirements.txt`, `DEPLOY-k3s.md`, `deploy.sh` (deploy
-  automatizado via rsync/ssh contra um servidor remoto fixo).
+- `ops/` — `Dockerfile`, `DEPLOY-k3s.md` (passo a passo manual) e `deploy.sh`
+  (deploy automatizado via rsync/ssh contra um servidor remoto fixo; rodar a
+  partir da raiz do repo: `ops/deploy.sh`).
+- `requirements.txt` na raiz.
 
 ## Como o app funciona
 - Processo único e sempre de pé (`app/main.py`): faz long polling de comandos do
@@ -44,8 +46,9 @@ Roda no k3s de um laptop-servidor.
   `podcast`, `stats`, `digest`, `api`).
 
 ## Build e deploy (k3s) — LER ANTES DE MEXER
-- **k3s usa containerd, NÃO o Docker.** Depois de
-  `docker build -t news-agent:latest .`, é OBRIGATÓRIO
+- O Dockerfile fica em `ops/Dockerfile`; o build context continua sendo a
+  raiz do repo: `docker build -f ops/Dockerfile -t news-agent:latest .`
+- **k3s usa containerd, NÃO o Docker.** Depois do build, é OBRIGATÓRIO
   `docker save news-agent:latest -o news-agent.tar && sudo k3s ctr images import news-agent.tar`.
   Sem isso o pod fica em `ErrImageNeverPull`.
 - Deploy: `kubectl apply -k k8s/`.
@@ -56,8 +59,8 @@ Roda no k3s de um laptop-servidor.
 ## Convenções
 - Não commitar segredos: `k8s/secret.yaml`, `secret.yaml` (raiz) e `.env`
   estão no `.gitignore`. Preferir criar o Secret de forma imperativa (ver
-  `DEPLOY-k3s.md`) em vez de manter valores reais em arquivo.
+  `ops/DEPLOY-k3s.md`) em vez de manter valores reais em arquivo.
 - Não editar/commitar `seen.db` / `news.db` (estado de runtime) nem a pasta
   `chroma/` (memória vetorial).
-- Ao mudar as fontes RSS (`app/config.py`) ou o Dockerfile, lembrar de
+- Ao mudar as fontes RSS (`app/config.py`) ou `ops/Dockerfile`, lembrar de
   rebuild + reimport da imagem no k3s.

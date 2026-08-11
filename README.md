@@ -62,9 +62,10 @@ app/
   main.py       loop: comandos + scheduler do digest + scheduler de stats
 k8s/            namespace, pvc, configmap, secret.example, deployment, kustomization
 tests/          testes unitários (agent, feeds, memory, podcast, stats, digest, api)
-Dockerfile
-deploy.sh       deploy automatizado (rsync + build + import + apply) num servidor remoto
-DEPLOY-k3s.md   passo a passo manual no servidor
+ops/
+  Dockerfile
+  deploy.sh       deploy automatizado (rsync + build + import + apply) num servidor remoto
+  DEPLOY-k3s.md   passo a passo manual no servidor
 ```
 
 ## Configuração (variáveis de ambiente)
@@ -95,11 +96,12 @@ opcionais — sem eles o bot roda sem curadoria/podcast.
 
 ## Deploy
 
-Veja `DEPLOY-k3s.md` para o passo a passo manual, ou `deploy.sh` para
-automatizar rsync + build + import no containerd do k3s + `kubectl apply`
-contra um servidor remoto (ajuste `SERVER` e a chave SSH no início do
-script). Resumo: instalar k3s → `docker build` → exportar e
-`k3s ctr images import` → criar Secret → `kubectl apply -k k8s/`.
+Veja `ops/DEPLOY-k3s.md` para o passo a passo manual, ou `ops/deploy.sh`
+(rodar a partir da raiz do repo) para automatizar rsync + build + import no
+containerd do k3s + `kubectl apply` contra um servidor remoto (ajuste
+`SERVER` e a chave SSH no início do script). Resumo: instalar k3s →
+`docker build -f ops/Dockerfile .` → exportar e `k3s ctr images import` →
+criar Secret → `kubectl apply -k k8s/`.
 
 ## Ligar o canal de Shorts
 

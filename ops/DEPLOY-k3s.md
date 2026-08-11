@@ -26,8 +26,8 @@ O k3s usa **containerd**, não o Docker. A imagem que você constrói com
 importar no containerd do k3s:
 
 ```bash
-cd /opt/news-agent        # onde estão o Dockerfile e app/
-docker build -t news-agent:latest .
+cd /opt/news-agent        # raiz do repo (ops/, app/, k8s/)
+docker build -f ops/Dockerfile -t news-agent:latest .
 
 docker save news-agent:latest -o news-agent.tar
 sudo k3s ctr images import news-agent.tar
