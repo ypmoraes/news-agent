@@ -181,7 +181,7 @@ def maybe_stats(conn):
         store.set_state(conn, "last_stats_date", now.date().isoformat())
 
 
-ANNOUNCE_UPDATE_DATE = "2026-08-12"
+ANNOUNCE_UPDATE_DATE = "2026-08-11"
 
 UPDATE_ANNOUNCEMENT = (
     "📢 <b>Atualizações no Bom Di.IA News!</b>\n\n"
@@ -197,7 +197,7 @@ def maybe_announce_update(conn):
         return
     if store.get_state(conn, "announced_update"):
         return
-    if (now.hour, now.minute) < (9, 0):
+    if (now.hour, now.minute) < (21, 0):
         return
     subs = store.list_subscribers(conn)
     for chat_id in subs:
