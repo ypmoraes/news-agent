@@ -44,7 +44,7 @@ PROJECT_INFO = (
     "O roteiro escrito pelo Claude vira áudio através da ElevenLabs "
     "(text-to-speech), convertido e enviado como podcast aqui no Telegram.\n\n"
     "<b>Onde ele mora</b>\n"
-    "O bot roda 24h num servidor caseiro (um laptop antigo), dentro de um "
+    "O bot roda 24h num servidor caseiro, dentro de um "
     "cluster Kubernetes leve chamado k3s. É um processo Python único, "
     "escrito do zero: ouve seus comandos (/start, /stop etc.) e, no mesmo "
     "loop, dispara o digest sozinho no horário certo. Tudo em containers "
