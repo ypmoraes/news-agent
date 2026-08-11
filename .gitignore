@@ -7,6 +7,7 @@ venv/
 # Secrets / env — NUNCA commitar
 .env
 k8s/secret.yaml
+secret.yaml
 
 # Runtime state
 *.db
@@ -16,3 +17,7 @@ k8s/secret.yaml
 # Build artifacts
 *.tar
 news-agent.tar
+
+# Test/generated audio artifacts
+*.ogg
+*.mp3

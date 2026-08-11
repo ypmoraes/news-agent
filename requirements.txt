@@ -2,3 +2,6 @@ feedparser>=6.0
 requests>=2.31
 trafilatura>=1.8
 tzdata>=2024.1
+pydub>=0.25
+chromadb>=0.5.0
+sentence-transformers>=3.0.0

@@ -72,6 +72,53 @@ def _chunks(text, limit=3800):
     return out
 
 
+def _bot_cover():
+    """Fetch the bot's profile photo. Returns JPEG bytes or None."""
+    try:
+        me = requests.get(_url("getMe"), timeout=10).json()
+        bot_id = me["result"]["id"]
+        photos = requests.get(
+            _url("getUserProfilePhotos"),
+            params={"user_id": bot_id, "limit": 1},
+            timeout=10,
+        ).json()
+        file_id = photos["result"]["photos"][0][-1]["file_id"]
+        file_info = requests.get(_url("getFile"), params={"file_id": file_id}, timeout=10).json()
+        file_path = file_info["result"]["file_path"]
+        token = config.BOT_TOKEN
+        img = requests.get(f"https://api.telegram.org/file/bot{token}/{file_path}", timeout=20)
+        return img.content
+    except Exception as exc:  # noqa: BLE001
+        log.warning("could not fetch bot cover: %s", exc)
+        return None
+
+
+def send_audio(chat_id, mp3_bytes, title, performer):
+    """Send audio file with cover art. Returns (ok, status_code)."""
+    cover = _bot_cover()
+    try:
+        files = {"audio": ("podcast.mp3", mp3_bytes, "audio/mpeg")}
+        if cover:
+            files["thumbnail"] = ("cover.jpg", cover, "image/jpeg")
+        r = requests.post(
+            _url("sendAudio"),
+            data={"chat_id": chat_id, "title": title, "performer": performer},
+            files=files,
+            timeout=120,
+        )
+        if r.status_code == 403:
+            return False, 403
+        r.raise_for_status()
+        return True, r.status_code
+    except requests.HTTPError as exc:
+        code = exc.response.status_code if exc.response is not None else None
+        log.warning("send_audio to %s failed: %s", chat_id, exc)
+        return False, code
+    except Exception as exc:  # noqa: BLE001
+        log.warning("send_audio to %s failed: %s", chat_id, exc)
+        return False, None
+
+
 def send_long(chat_id, text):
     """Send a possibly long message, split across the 4096-char limit."""
     last = None
@@ -91,12 +138,16 @@ def _header():
         now = datetime.now(ZoneInfo(config.TIMEZONE))
     except Exception:  # noqa: BLE001
         now = datetime.now()
-    return f"\u2600\ufe0f <b>Not\u00edcias de tech \u2014 {now:%d/%m}</b>"
+    return f"\U0001f4f0 <b>Bom Di.IA News \u2014 {now:%d/%m}</b>"
 
 
-def format_digest(digest, raw_items):
+def format_digest(digest, raw_items, has_podcast=False, quotes=None):
     if digest:
         lines = [_header(), ""]
+        if has_podcast:
+            lines += ["\U0001f3d9 <b>Bom Di.IA News</b> \u2014 ou\u00e7a o podcast desta edi\u00e7\u00e3o logo abaixo", ""]
+        if quotes:
+            lines += [quotes, ""]
         for i, d in enumerate(digest, 1):
             lines.append(f"{i}. <b>{html.escape(d.get('title', ''))}</b> \u2014 <i>{html.escape(d.get('source', ''))}</i>")
             if d.get("why"):

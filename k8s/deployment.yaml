@@ -32,9 +32,9 @@ spec:
           resources:
             requests:
               cpu: "50m"
-              memory: "128Mi"
-            limits:
               memory: "256Mi"
+            limits:
+              memory: "700Mi"   # all-MiniLM-L6-v2 uses ~200-350 MB
       volumes:
         - name: data
           persistentVolumeClaim:

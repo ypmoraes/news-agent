@@ -6,9 +6,11 @@ metadata:
 data:
   NEWS_MODEL: "claude-haiku-4-5-20251001"
   NEWS_TZ: "America/Sao_Paulo"
-  NEWS_DIGEST_TIME: "07:00"
+  NEWS_DIGEST_TIME: "07:30"
   NEWS_POLL_TIMEOUT: "30"
   NEWS_MAX_CANDIDATES: "40"
   NEWS_MAX_DIGEST: "6"
   NEWS_ENABLE_SHORTS: "false"
   NEWS_DB_PATH: "/data/news.db"
+  NEWS_MEMORY_ENABLED: "true"
+  NEWS_MEMORY_WINDOW_DAYS: "7"
