@@ -60,7 +60,7 @@ PROJECT_INFO = (
     "esse side project em agosto de 2026 pra resolver um problema dele: "
     "ficar bem informado sem precisar abrir um monte de site e fonte "
     "diferente todo dia. O código tá aberto no GitHub: "
-    "https://github.com/ypmoraes\n\n"
+    "https://github.com/ypmoraes/news-agent\n\n"
     "<i>Perguntas ou sugestões? Responde aqui mesmo.</i>"
 )
 
