@@ -103,11 +103,6 @@ containerd do k3s + `kubectl apply` contra um servidor remoto (ajuste
 `docker build -f ops/Dockerfile .` → exportar e `k3s ctr images import` →
 criar Secret → `kubectl apply -k k8s/`.
 
-## Ligar o canal de Shorts
-
-Ponha `NEWS_ENABLE_SHORTS=true` no ConfigMap: cada notícia curada passa a vir
-com um gancho de YouTube Short — seu digest matinal vira também sua pauta.
-
 ## Ponte pro Grafana (próxima etapa)
 
 O bot já registra custo/uso por edição em `digest_log` (SQLite); falta expor
