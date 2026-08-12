@@ -72,8 +72,17 @@ def _chunks(text, limit=3800):
     return out
 
 
+_cover_cache = None
+
+
 def _bot_cover():
-    """Fetch the bot's profile photo. Returns JPEG bytes or None."""
+    """Fetch the bot's profile photo (cached after the first successful call).
+
+    Returns JPEG bytes or None.
+    """
+    global _cover_cache
+    if _cover_cache is not None:
+        return _cover_cache
     try:
         me = requests.get(_url("getMe"), timeout=10).json()
         bot_id = me["result"]["id"]
@@ -87,7 +96,8 @@ def _bot_cover():
         file_path = file_info["result"]["file_path"]
         token = config.BOT_TOKEN
         img = requests.get(f"https://api.telegram.org/file/bot{token}/{file_path}", timeout=20)
-        return img.content
+        _cover_cache = img.content
+        return _cover_cache
     except Exception as exc:  # noqa: BLE001
         log.warning("could not fetch bot cover: %s", exc)
         return None

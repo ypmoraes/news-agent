@@ -181,31 +181,6 @@ def maybe_stats(conn):
         store.set_state(conn, "last_stats_date", now.date().isoformat())
 
 
-ANNOUNCE_UPDATE_DATE = "2026-08-11"
-
-UPDATE_ANNOUNCEMENT = (
-    "📢 <b>Atualizações no Bom Di.IA News!</b>\n\n"
-    "O bot ganhou funções novas por aqui. Digite /sobre pra ver todos os "
-    "comandos disponíveis."
-)
-
-
-def maybe_announce_update(conn):
-    """One-off broadcast telling subscribers about new features on ANNOUNCE_UPDATE_DATE."""
-    now = _now()
-    if now.date().isoformat() != ANNOUNCE_UPDATE_DATE:
-        return
-    if store.get_state(conn, "announced_update"):
-        return
-    if (now.hour, now.minute) < (21, 0):
-        return
-    subs = store.list_subscribers(conn)
-    for chat_id in subs:
-        telegram.send_message(chat_id, UPDATE_ANNOUNCEMENT)
-    store.set_state(conn, "announced_update", "1")
-    log.info("update announcement sent to %d subscribers", len(subs))
-
-
 def handle_update(conn, upd):
     msg = upd.get("message") or upd.get("edited_message") or {}
     chat = msg.get("chat", {})
@@ -315,10 +290,6 @@ def main():
             maybe_stats(conn)
         except Exception as exc:  # noqa: BLE001
             log.warning("stats error: %s", exc)
-        try:
-            maybe_announce_update(conn)
-        except Exception as exc:  # noqa: BLE001
-            log.warning("projeto announcement error: %s", exc)
 
     conn.close()
     log.info("stopped cleanly")
