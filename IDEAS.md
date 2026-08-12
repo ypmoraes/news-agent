@@ -45,7 +45,8 @@
 ## Infra / DevOps
 - **CronJob Kubernetes** — mover o scheduler do digest para um CronJob nativo do k8s, separando responsabilidades: bot só faz polling, CronJob dispara o digest. Horário UTC: 10:30 (= 07:30 BRT). Monta o mesmo PVC do bot.
 - **Perfis personalizados por assinante** — digest e podcast gerados por usuário com base nos interesses cadastrados no `/start`. Multiplica custo de Claude e ElevenLabs por assinante — adiar até ter demanda real.
-- **Grafana + Prometheus** — dashboards de métricas do cluster e do bot (CPU, memória, digests enviados). Bom para aprender Services e Ingress no k3s.
+- **Grafana + Prometheus** ✅ *(feito em 2026-08-12)* — dashboards de CPU/memória/disco do node e status de pods/deployments via node-exporter + kube-state-metrics + Prometheus + Grafana, manifestos em `k8s-monitoring/`. Falta: métricas de negócio do bot (custo Anthropic/ElevenLabs, edições enviadas) e Ingress/TLS (hoje é NodePort puro).
+- **Prompt caching no agent de curadoria** — o loop de tool-use em `curate()` (`agent.py`) reenvia o system prompt inteiro + o histórico crescente a cada uma das até 8 rodadas de uma mesma curadoria. Marcando `cache_control: {"type": "ephemeral"}` no system prompt e nas tools, a partir da 2ª rodada esse prefixo repetido é lido a ~10% do preço de input em vez de preço cheio — só o `tool_result` novo de cada rodada (o artigo recém-buscado) continua a preço cheio. TTL padrão de 5min cobre folgado as poucas rodadas de uma curadoria; não ajuda entre digests de dias diferentes (rodam 1x/dia, cache expira antes do próximo).
 - **Loki** — agregador de logs com interface gráfica, substitui `kubectl logs`.
 - **Redis** — substituir SQLite para dedup e estado, permitindo escalar para múltiplas réplicas no futuro.
 
