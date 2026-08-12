@@ -7,6 +7,7 @@ import sys
 from datetime import datetime
 
 import agent
+import battery
 import config
 import feeds
 import market
@@ -242,6 +243,8 @@ def handle_update(conn, upd):
         run_digest(conn)
     elif cmd == "/stats" and is_admin:
         send_weekly_stats(conn)
+    elif cmd == "/bateria" and is_admin:
+        telegram.send_message(chat_id, battery.status_text())
     elif cmd.startswith("/"):
         telegram.send_message(chat_id, "Comando não reconhecido. /help pra lista de comandos.")
     elif not is_admin:
@@ -290,6 +293,10 @@ def main():
             maybe_stats(conn)
         except Exception as exc:  # noqa: BLE001
             log.warning("stats error: %s", exc)
+        try:
+            battery.maybe_alert(conn)
+        except Exception as exc:  # noqa: BLE001
+            log.warning("battery check error: %s", exc)
 
     conn.close()
     log.info("stopped cleanly")

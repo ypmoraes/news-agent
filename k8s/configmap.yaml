@@ -14,3 +14,7 @@ data:
   NEWS_DB_PATH: "/data/news.db"
   NEWS_MEMORY_ENABLED: "true"
   NEWS_MEMORY_WINDOW_DAYS: "7"
+  NEWS_BATTERY_ALERT_ENABLED: "true"
+  NEWS_BATTERY_ALERT_THRESHOLD: "20"
+  NEWS_BATTERY_CHECK_INTERVAL_MIN: "5"
+  NEWS_BATTERY_CHECK_URL: "http://node-exporter.monitoring.svc.cluster.local:9100/metrics"

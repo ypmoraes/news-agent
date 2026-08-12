@@ -31,6 +31,14 @@ ENABLE_SHORTS = os.environ.get("NEWS_ENABLE_SHORTS", "false").lower() in ("1", "
 MEMORY_ENABLED = os.environ.get("NEWS_MEMORY_ENABLED", "true").lower() in ("1", "true", "yes")
 MEMORY_WINDOW_DAYS = int(os.environ.get("NEWS_MEMORY_WINDOW_DAYS", "7"))
 
+# --- Battery/AC alert (laptop-server has no UPS) ---
+BATTERY_ALERT_ENABLED = os.environ.get("NEWS_BATTERY_ALERT_ENABLED", "true").lower() in ("1", "true", "yes")
+BATTERY_ALERT_THRESHOLD = int(os.environ.get("NEWS_BATTERY_ALERT_THRESHOLD", "20"))  # % charge
+BATTERY_CHECK_INTERVAL_MIN = int(os.environ.get("NEWS_BATTERY_CHECK_INTERVAL_MIN", "5"))
+BATTERY_CHECK_URL = os.environ.get(
+    "NEWS_BATTERY_CHECK_URL", "http://node-exporter.monitoring.svc.cluster.local:9100/metrics"
+)
+
 INCLUDE = _csv("NEWS_INCLUDE")
 EXCLUDE = _csv("NEWS_EXCLUDE")
 
