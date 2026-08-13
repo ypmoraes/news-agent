@@ -20,6 +20,7 @@
 - **Áudio** — gerar áudio com TTS (OpenAI TTS ~US$0,015/digest ou ElevenLabs free tier) e mandar como voice message (`sendVoice`) no Telegram. Requer conversão para OGG/Opus via ffmpeg e instalação no Dockerfile. TTS não consome tokens da Anthropic.
 - **Thread formatada** — cada notícia como uma mensagem separada com botão "Ler mais"
 - **Modo silencioso** — envia sem notificação sonora pra não acordar quem recebe às 07:00
+- **Podcast em blocos (tech / economia)** — hoje o roteiro do `podcast.py` mistura tudo numa lista única, porque o `digest` retornado pelo `agent.py` não marca a categoria de cada notícia (só pede pra "balancear" tech e economia na escolha). Precisa de um campo novo `"category": "tech"|"economia"` no JSON que o agent já retorna (mesma chamada, sem custo extra) — inferir pela fonte (ex: "Bloomberg = economia") seria frágil, porque fontes como WSJ/Bloomberg cobrem os dois temas. Com a categoria marcada, o `podcast.py` agrupa os itens e estrutura o roteiro em dois blocos com transição ("bloco 1: tecnologia... bloco 2: economia..."). Dá pra aplicar a mesma separação no texto do digest do Telegram (`telegram.format_digest`), com cabeçalho por seção.
 
 ## RAG — Memória histórica do digest
 - **Problema:** o agent não tem memória entre edições — mesma notícia pode aparecer em dias seguidos e não há contexto de desdobramentos.
