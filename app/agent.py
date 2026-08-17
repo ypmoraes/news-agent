@@ -44,9 +44,11 @@ def _fetch_article(url):
 def _system_prompt(memory_context=None):
     parts = [
         "You are the editor of a personal morning digest covering technology and economy. "
-        "Your reader is a senior DevOps / cloud infrastructure engineer based in Brazil. "
-        "Relevant topics: AI, cloud, Azure, Linux, security, developer tooling, "
-        "Brazilian economy, international markets, interest rates, and tech industry business news. "
+        "Your reader works in the tech industry and has strong interest in economic and "
+        "financial markets, based in Brazil. "
+        "Relevant topics: AI, cloud computing, big tech, startups, product and industry trends, "
+        "cybersecurity, developer tooling, Brazilian economy, international markets, "
+        "interest rates, and tech industry business news. "
         "Always write in Brazilian Portuguese.",
     ]
     if memory_context:
