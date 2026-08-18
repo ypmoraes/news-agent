@@ -96,6 +96,7 @@ def run_digest(conn):
     quotes, quotes_spoken = market.get_quotes()
     mp3, el_chars = podcast.produce(digest, quotes=quotes_spoken)
     text = telegram.format_digest(digest, candidates, has_podcast=bool(mp3), quotes=quotes)
+    store.save_last_digest(conn, text, mp3)
     sent = 0
     for chat_id in subs:
         ok, code = telegram.send_long(chat_id, text)
@@ -210,6 +211,12 @@ def handle_update(conn, upd):
             "/projeto \u2014 como o bot \u00e9 feito por baixo do cap\u00f4\n\n"
             "Desenvolvido com Claude (Anthropic) + ElevenLabs."
         ))
+        last_text, last_mp3 = store.load_last_digest(conn)
+        if last_text:
+            telegram.send_message(chat_id, "\U0001f4ec <i>Aqui está a edição mais recente, pra você não perder nada:</i>")
+            telegram.send_long(chat_id, last_text)
+            if last_mp3:
+                telegram.send_audio(chat_id, last_mp3, title="Bom Di.IA News", performer="Bom Di.IA News")
         log.info("subscribed %s (%s)", chat_id, name)
     elif cmd == "/stop":
         store.remove_subscriber(conn, chat_id)

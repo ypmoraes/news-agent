@@ -134,3 +134,32 @@ def set_state(conn, key, value):
         (key, str(value)),
     )
     conn.commit()
+
+
+# --- last digest (replayed to new subscribers via /start) ---
+def _podcast_path():
+    return os.path.join(os.path.dirname(os.path.abspath(config.DB_PATH)), "last_podcast.mp3")
+
+
+def save_last_digest(conn, text, mp3=None):
+    """Persist the most recent digest text and podcast, so new subscribers can catch up."""
+    set_state(conn, "last_digest_text", text)
+    path = _podcast_path()
+    if mp3:
+        with open(path, "wb") as f:
+            f.write(mp3)
+    elif os.path.exists(path):
+        os.remove(path)
+
+
+def load_last_digest(conn):
+    """Return (text, mp3_bytes) for the most recent digest, or (None, None)."""
+    text = get_state(conn, "last_digest_text")
+    if not text:
+        return None, None
+    path = _podcast_path()
+    mp3 = None
+    if os.path.exists(path):
+        with open(path, "rb") as f:
+            mp3 = f.read()
+    return text, mp3
