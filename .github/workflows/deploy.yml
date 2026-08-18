@@ -8,6 +8,8 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
+    env:
+      KUBECONFIG: /home/ymoraes/.kube/config
     steps:
       - uses: actions/checkout@v4
 
