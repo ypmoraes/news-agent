@@ -1,0 +1,30 @@
+name: Deploy
+
+# Fase 2 do plano em IDEAS.md: disparo manual primeiro (workflow_dispatch).
+# Trocar para `push: branches: [main]` só depois de validar alguns runs manuais.
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build da imagem Docker
+        run: docker build -f ops/Dockerfile -t news-agent:latest .
+
+      - name: Exportar e importar no k3s
+        run: |
+          docker save news-agent:latest -o /tmp/news-agent.tar
+          sudo k3s ctr images import /tmp/news-agent.tar
+          rm /tmp/news-agent.tar
+
+      - name: Aplicar manifests e reiniciar
+        run: |
+          kubectl apply -k k8s/
+          kubectl rollout restart deployment/news-agent -n news
+          kubectl rollout status deployment/news-agent -n news
+
+      - name: Logs pós-deploy
+        run: kubectl logs -n news deploy/news-agent --tail=10
