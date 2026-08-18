@@ -93,8 +93,8 @@ def run_digest(conn):
 
     memory_context = memory.find_similar(candidates)
     digest, input_tokens, output_tokens = agent.curate(candidates, memory_context)
-    quotes = market.get_quotes()
-    mp3, el_chars = podcast.produce(digest, quotes=quotes)
+    quotes, quotes_spoken = market.get_quotes()
+    mp3, el_chars = podcast.produce(digest, quotes=quotes_spoken)
     text = telegram.format_digest(digest, candidates, has_podcast=bool(mp3), quotes=quotes)
     sent = 0
     for chat_id in subs:

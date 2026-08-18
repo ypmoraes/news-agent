@@ -61,10 +61,13 @@ def _system_prompt(memory_context=None):
         "to read the full text before deciding.",
         f"4. Pick the top {config.MAX_DIGEST} stories, ranked by importance.",
         "5. For each, write one crisp sentence of 'por que importa', in Brazilian Portuguese.",
+        "6. Translate the title into natural Brazilian Portuguese, preserving names, "
+        "acronyms, and technical terms that are normally kept in English (e.g. company "
+        "and product names). If the original title is already in Portuguese, keep it as is.",
     ]
     if config.ENABLE_SHORTS:
         parts.append(
-            "5. If a story would make a good YouTube Short, set short_hook to a punchy "
+            "7. If a story would make a good YouTube Short, set short_hook to a punchy "
             "one-line English hook; otherwise null."
         )
     parts.append(

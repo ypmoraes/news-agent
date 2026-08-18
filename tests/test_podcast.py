@@ -29,8 +29,9 @@ if not candidates:
     sys.exit(0)
 
 print("\n=== Cotações ===")
-quotes = market.get_quotes()
+quotes, quotes_spoken = market.get_quotes()
 print(quotes or "Cotações indisponíveis")
+print(quotes_spoken or "(sem versão falada)")
 
 print("\n=== Rodando curadoria (agent) ===")
 digest, input_tokens, output_tokens = agent.curate(candidates)
@@ -41,7 +42,7 @@ else:
     sys.exit(1)
 
 print("\n=== Gerando roteiro ===")
-script = podcast.generate_script(digest, quotes=quotes)
+script = podcast.generate_script(digest, quotes=quotes_spoken)
 if not script:
     print("ERRO: roteiro nao gerado")
     sys.exit(1)

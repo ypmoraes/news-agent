@@ -34,7 +34,7 @@ if len(candidates) > 5:
     print(f"  ... e mais {len(candidates) - 5}")
 
 print("\n=== Cotações ===")
-quotes = market.get_quotes()
+quotes, quotes_spoken = market.get_quotes()
 print(quotes or "Cotações indisponíveis")
 
 print("\n=== Rodando curadoria (agent) ===")
