@@ -95,3 +95,56 @@ kubectl -n news delete -k k8s/                        # remover tudo (PVC persis
 Ajustes de conteúdo (feeds, modelo, limites): edite o ConfigMap
 (`kubectl -n news edit configmap news-agent-config`) e reinicie o rollout.
 Fontes RSS ficam em `app/config.py` (exige rebuild + reimport da imagem).
+
+## CI/CD — runner self-hosted do GitHub Actions
+
+Além do `ops/deploy.sh` (manual, via rsync/ssh) e do passo a passo acima, o
+mesmo pipeline de deploy pode ser disparado direto do GitHub, rodando num
+runner self-hosted instalado no próprio servidor k3s — sem precisar copiar
+arquivo por SSH, porque o runner já mora na máquina de destino.
+
+**Instalação (feita uma vez):**
+
+```bash
+mkdir -p ~/actions-runner && cd ~/actions-runner
+curl -o actions-runner-linux-x64-<versão>.tar.gz -L \
+  https://github.com/actions/runner/releases/download/v<versão>/actions-runner-linux-x64-<versão>.tar.gz
+tar xzf actions-runner-linux-x64-<versão>.tar.gz
+
+# token gerado em: GitHub → Settings do repo → Actions → Runners → New self-hosted runner
+./config.sh --url https://github.com/ypmoraes/news-agent --token <TOKEN> \
+  --unattended --name ymoraes-laptop --labels self-hosted,news-agent --work _work
+
+sudo ./svc.sh install
+sudo ./svc.sh start
+```
+
+O token de registro expira em ~1h e só pode ser gerado por quem tem acesso
+de admin ao repositório no GitHub (não dá pra automatizar sem `gh` CLI
+autenticado). Pré-requisitos que já valiam pro `deploy.sh` continuam
+valendo aqui: usuário do runner (`ymoraes`) no grupo `docker` e com a regra
+`NOPASSWD: /usr/local/bin/k3s ctr images import *` no sudoers.
+
+**Operação do serviço:**
+
+```bash
+cd ~/actions-runner
+sudo ./svc.sh status     # ver se está rodando ("Listening for Jobs")
+sudo ./svc.sh stop       # parar
+sudo ./svc.sh uninstall  # remover o serviço systemd (não desregistra do GitHub)
+```
+
+**Disparo:** hoje o workflow (`.github/workflows/deploy.yml`) só roda por
+disparo manual — **Actions → Deploy → Run workflow**, branch `main`. Ainda
+não dispara automaticamente em push, de propósito: a ideia é validar mais
+alguns runs manuais antes de trocar o gatilho (ver `IDEAS.md`). O
+`KUBECONFIG` usado pelo workflow é `/home/ymoraes/.kube/config` (mesma
+cópia com permissão de usuário criada na Fase 1 deste documento) — sem
+isso o `kubectl` recebe "permission denied" ao tentar ler
+`/etc/rancher/k3s/k3s.yaml`, que é root-only.
+
+**Segurança:** um runner self-hosted executa qualquer coisa definida em
+`.github/workflows/` com os privilégios do usuário `ymoraes` no servidor
+(inclui Docker e o sudo escopado do k3s). Aceitável aqui porque o repo é
+privado e só o Yuri tem push — não expor esse runner a um repo que aceite
+PRs externos.

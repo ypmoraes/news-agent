@@ -16,6 +16,12 @@ Roda no k3s de um laptop-servidor.
 - `ops/` — `Dockerfile`, `DEPLOY-k3s.md` (passo a passo manual) e `deploy.sh`
   (deploy automatizado via rsync/ssh contra um servidor remoto fixo; rodar a
   partir da raiz do repo: `ops/deploy.sh`).
+- `.github/workflows/deploy.yml` — mesmo pipeline de deploy (build → import no
+  containerd → `kubectl apply -k k8s/`), rodando num runner self-hosted do
+  GitHub Actions instalado como serviço systemd no próprio servidor k3s (ver
+  `ops/DEPLOY-k3s.md`, seção "CI/CD"). Hoje disparado manualmente via **Actions
+  → Deploy → Run workflow** (`workflow_dispatch`) — ainda não dispara sozinho em
+  push na `main`.
 - `requirements.txt` na raiz.
 
 ## Como o app funciona

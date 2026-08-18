@@ -66,6 +66,9 @@ ops/
   Dockerfile
   deploy.sh       deploy automatizado (rsync + build + import + apply) num servidor remoto
   DEPLOY-k3s.md   passo a passo manual no servidor
+.github/
+  workflows/deploy.yml   mesmo pipeline de deploy, via runner self-hosted do GitHub Actions
+                          instalado no próprio servidor k3s (disparo manual por enquanto)
 ```
 
 ## Configuração (variáveis de ambiente)
@@ -102,6 +105,12 @@ containerd do k3s + `kubectl apply` contra um servidor remoto (ajuste
 `SERVER` e a chave SSH no início do script). Resumo: instalar k3s →
 `docker build -f ops/Dockerfile .` → exportar e `k3s ctr images import` →
 criar Secret → `kubectl apply -k k8s/`.
+
+Existe também um runner self-hosted do GitHub Actions instalado como serviço
+no próprio servidor (`.github/workflows/deploy.yml`), que roda esse mesmo
+pipeline sem precisar de rsync/ssh — hoje disparado manualmente em **Actions →
+Deploy → Run workflow**. Detalhes de instalação/operação do runner em
+`ops/DEPLOY-k3s.md`.
 
 ## Ponte pro Grafana (próxima etapa)
 
